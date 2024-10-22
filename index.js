@@ -47,11 +47,11 @@ const options = {
 };
 
 // Create HTTPS server
-https.createServer(options, app).listen(443, () => {
-    console.log('HTTPS Server running on port 443');
+https.createServer(options, app).listen(8800, () => {
+    console.log('HTTPS Server running on port 8800');
 });
 
 // Fallback to HTTP server for development purposes
-app.listen(8800, () => {
-    console.log("HTTP Server is running on port 8800");
+app.listen(3000, () => {
+    console.log("HTTP Server is running on port 3000");
 });
