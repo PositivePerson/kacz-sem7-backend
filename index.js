@@ -8,6 +8,8 @@ const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
 const cors = require("cors");
+const https = require('https');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -38,6 +40,18 @@ app.get("/", (req, res) => {
     res.send("Hello, Welcome to Homepage!");
 });
 
+// HTTPS options
+const options = {
+    key: fs.readFileSync('./server.key'),
+    cert: fs.readFileSync('./server.crt')
+};
+
+// Create HTTPS server
+https.createServer(options, app).listen(443, () => {
+    console.log('HTTPS Server running on port 443');
+});
+
+// Fallback to HTTP server for development purposes
 app.listen(8800, () => {
-    console.log("Server is running on port 8800");
+    console.log("HTTP Server is running on port 8800");
 });
