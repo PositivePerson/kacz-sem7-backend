@@ -66,7 +66,7 @@ router.post("/login", async (req, res) => {
 
         // Set token in an HTTP-only, secure cookie
         res.cookie("authToken", token, {
-            httpOnly: true,    // Prevent JavaScript access to the cookie (XSS protection)
+            httpOnly: false,    // Prevent JavaScript access to the cookie (XSS protection)
             secure: process.env.NODE_ENV === "production",  // Set to true only if using HTTPS in production
             sameSite: "None", // Helps mitigate CSRF attacks
             maxAge: 60 * 60 * 1000,  // 1 hour expiration
@@ -84,7 +84,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/logout", (req, res) => {
     res.clearCookie("authToken", {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === "production",
         sameSite: "None",
     });
