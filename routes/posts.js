@@ -166,6 +166,8 @@ router.get("/:postId", async (req, res) => {
 
 // Get all posts
 router.get("/", verifyToken, async (req, res) => {
+    console.log("req:", req);
+
     try {
         const posts = await Post.find();
         res.status(200).json(posts);
