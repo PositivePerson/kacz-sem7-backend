@@ -1,23 +1,33 @@
 const jwt = require('jsonwebtoken');
 
+// Helper function to parse cookies
+const parseCookies = (cookieHeader) => {
+    const cookies = {};
+    cookieHeader && cookieHeader.split(';').forEach((cookie) => {
+        const parts = cookie.split('=');
+        cookies[parts[0].trim()] = (parts[1] || '').trim();
+    });
+    return cookies;
+};
+
 // Middleware to protect routes
 const verifyToken = (req, res, next) => {
-    // const token = req.header('Authorization')?.split(' ')[1]; // Expecting format "Bearer token"
-    // Read the token from cookies (expecting token to be stored in "authToken" cookie)
-    console.log("req with cookie?: ", req);
-    const token = req.cookies.authToken;  // Access the token from the "authToken" cookie
+    // Manually parse cookies from the 'cookie' header
+    const cookies = parseCookies(req.headers.cookie);
+    console.log("Parsed Cookies:", cookies);
 
+    const token = cookies.authToken;  // Get the authToken from parsed cookies
     if (!token) {
         return res.status(401).json("Access denied, no token provided");
     }
 
     try {
-        // Verify the token
-        const verified = jwt.verify(token, process.env.JWT_SECRET);  // Verify token with secret key
-        req.user = verified;  // Attach the decoded user info to the request
-        next();  // Proceed to the next middleware/route handler
+        // Verify the token using JWT secret
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = verified;  // Attach decoded token to request
+        next();  // Proceed to the next middleware or route handler
     } catch (err) {
-        res.status(400).json("Invalid token");  // Handle invalid token error
+        res.status(400).json("Invalid token");
     }
 };
 
