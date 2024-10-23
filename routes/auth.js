@@ -58,13 +58,22 @@ router.post("/login", async (req, res) => {
         // Generate JWT token
         const token = jwt.sign(
             { userId: user._id, isAdmin: user.isAdmin },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET,  // Ensure JWT_SECRET is defined in your .env file
             { expiresIn: "1h" }
         );
 
-        // Send user info and token
+        // Set token in an HTTP-only, secure cookie
+        res.cookie("authToken", token, {
+            httpOnly: true,    // Prevent JavaScript access to the cookie (XSS protection)
+            secure: process.env.NODE_ENV === "production",  // Set to true only if using HTTPS in production
+            sameSite: "Strict", // Helps mitigate CSRF attacks
+            maxAge: 60 * 60 * 1000,  // 1 hour expiration
+        });
+
+        // Send user info (without the password) in the response
         const { password, ...userWithoutPassword } = user._doc;
-        res.status(200).json({ token, ...userWithoutPassword });
+        res.status(200).json({ ...userWithoutPassword });
+
     } catch (err) {
         console.error("Error during login:", err.message);
         res.status(500).json("Internal server error");
