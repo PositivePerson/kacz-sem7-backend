@@ -166,13 +166,16 @@ router.get("/:postId", async (req, res) => {
 
 // Get all posts
 router.get("/", verifyToken, async (req, res) => {
-    console.log("req:", req);
+    console.log("User making request:", req.user);  // Log the user
+    console.log("Fetching posts...");
 
     try {
-        const posts = await Post.find();
+        const posts = await Post.find();  // Ensure the Post model is valid
+        console.log("Posts fetched:", posts);  // Log the result
         res.status(200).json(posts);
     } catch (err) {
-        res.status(500).json(err);
+        console.error("Error fetching posts:", err);  // Log any errors
+        res.status(500).json("Error fetching posts");
     }
 });
 
