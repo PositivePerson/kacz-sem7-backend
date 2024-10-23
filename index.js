@@ -16,6 +16,7 @@ dotenv.config();
 // CORS configuration
 const corsOptions = {
     origin: 'http://localhost:3000', // Allow only this origin
+    credentials: true, // Enable cookies
     optionsSuccessStatus: 200, // Some legacy browsers choke on 204
 };
 
@@ -52,6 +53,6 @@ https.createServer(options, app).listen(8800, () => {
 });
 
 // Fallback to HTTP server for development purposes
-app.listen(3000, () => {
-    console.log("HTTP Server is running on port 3000");
-});
+// app.listen(3000, () => {
+//     console.log("HTTP Server is running on port 3000");
+// });

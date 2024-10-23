@@ -66,7 +66,7 @@ router.post("/login", async (req, res) => {
         res.cookie("authToken", token, {
             httpOnly: true,    // Prevent JavaScript access to the cookie (XSS protection)
             secure: process.env.NODE_ENV === "production",  // Set to true only if using HTTPS in production
-            sameSite: "Strict", // Helps mitigate CSRF attacks
+            sameSite: "None", // Helps mitigate CSRF attacks
             maxAge: 60 * 60 * 1000,  // 1 hour expiration
         });
 
@@ -78,6 +78,15 @@ router.post("/login", async (req, res) => {
         console.error("Error during login:", err.message);
         res.status(500).json("Internal server error");
     }
+});
+
+router.post("/logout", (req, res) => {
+    res.clearCookie("authToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+    });
+    res.status(200).json("Logged out successfully");
 });
 
 module.exports = router;
