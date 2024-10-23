@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const verifyToken = (req, res, next) => {
     // const token = req.header('Authorization')?.split(' ')[1]; // Expecting format "Bearer token"
     // Read the token from cookies (expecting token to be stored in "authToken" cookie)
+    console.log("req with cookie?: ", req);
     const token = req.cookies.authToken;  // Access the token from the "authToken" cookie
 
     if (!token) {
