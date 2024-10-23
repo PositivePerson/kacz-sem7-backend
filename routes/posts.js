@@ -165,7 +165,7 @@ router.get("/:postId", async (req, res) => {
 })
 
 // Get all posts
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", async (req, res) => {
     console.log("req:", req);
 
     try {

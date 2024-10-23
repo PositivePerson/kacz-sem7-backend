@@ -52,7 +52,7 @@ router.delete("/:id", async (req, res) => {
 })
 
 // Get all users
-router.get('/profile', verifyToken, async (req, res) => {
+router.get('/profile', async (req, res) => {
     try {
         const users = await User.find().select("-password -isAdmin"); // Exclude password and isAdmin
         res.status(200).json(users);
