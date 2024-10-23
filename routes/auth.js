@@ -40,6 +40,8 @@ router.post("/register", async (req, res) => {
 
 // Login a user
 router.post("/login", async (req, res) => {
+    console.log("Environment:", process.env.NODE_ENV);
+
     try {
         // Find user by email
         const user = await User.findOne({ email: req.body.email });
@@ -84,7 +86,7 @@ router.post("/logout", (req, res) => {
     res.clearCookie("authToken", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        sameSite: "None",
     });
     res.status(200).json("Logged out successfully");
 });
