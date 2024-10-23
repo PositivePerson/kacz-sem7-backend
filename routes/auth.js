@@ -74,7 +74,7 @@ router.post("/login", async (req, res) => {
 
         // Send user info (without the password) in the response
         const { password, ...userWithoutPassword } = user._doc;
-        res.status(200).json({ ...userWithoutPassword });
+        res.status(200).json({ ...userWithoutPassword, token });
 
     } catch (err) {
         console.error("Error during login:", err.message);
