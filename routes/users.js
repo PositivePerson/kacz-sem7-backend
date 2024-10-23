@@ -52,7 +52,7 @@ router.delete("/:id", async (req, res) => {
 })
 
 // Get all users
-router.get('/profile', async (req, res) => {
+router.get('/profile', verifyToken, async (req, res) => {
     try {
         const users = await User.find().select("-password -isAdmin"); // Exclude password and isAdmin
         res.status(200).json(users);
@@ -63,7 +63,7 @@ router.get('/profile', async (req, res) => {
 });
 
 //get a user
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyToken, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         const { password, updatedAt, ...other } = user._doc
