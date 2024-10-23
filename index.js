@@ -15,7 +15,7 @@ dotenv.config();
 
 // CORS configuration
 const corsOptions = {
-    origin: 'http://localhost:3000', // Allow only this origin
+    origin: 'https://localhost:3000', // Allow only this origin
     credentials: true, // Enable cookies
     optionsSuccessStatus: 200, // Some legacy browsers choke on 204
 };
