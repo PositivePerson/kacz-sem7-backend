@@ -1,19 +1,33 @@
 const rateLimit = require("express-rate-limit");
 
-// Limiter dla globalnych żądań (ograniczenie 100 żądań na minutę z jednego IP)
+// Limiter for global requests (100 requests per minute from one IP)
 const generalLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minuta
-    max: 100, // Limit 100 żądań na minutę
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 100, // Limit each IP to 100 requests per windowMs
     message: "Zbyt wiele żądań z tego IP, spróbuj ponownie za chwilę.",
     headers: true,
+    handler: (req, res, next) => {
+        // Customize response for rate limit exceeded
+        res.status(429).json({
+            error: true,
+            message: "Zbyt wiele żądań z tego IP, spróbuj ponownie za chwilę."
+        });
+    }
 });
 
-// Limiter dla endpointów wrażliwych na brute-force (np. logowanie)
+// Limiter for sensitive endpoints (5 login attempts per 15 minutes)
 const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minut
-    max: 5, // Limit 5 prób na IP na 15 minut
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit to 5 requests per windowMs
     message: "Zbyt wiele prób logowania. Spróbuj ponownie za 15 minut.",
     headers: true,
+    handler: (req, res, next) => {
+        // Customize response for rate limit exceeded
+        res.status(429).json({
+            error: true,
+            message: "Zbyt wiele prób logowania. Spróbuj ponownie za 15 minut."
+        });
+    }
 });
 
 module.exports = { generalLimiter, authLimiter };
