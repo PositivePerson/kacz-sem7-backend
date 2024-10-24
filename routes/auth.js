@@ -41,8 +41,6 @@ router.post("/register", async (req, res) => {
 
 // Login a user
 router.post("/login", async (req, res) => {
-    console.log("Environment:", process.env.NODE_ENV);
-
     try {
         // Find user by email
         const user = await User.findOne({ email: req.body.email });
