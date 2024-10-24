@@ -10,6 +10,8 @@ const postRoute = require("./routes/posts");
 const cors = require("cors");
 const https = require('https');
 const fs = require('fs');
+const rateLimit = require("express-rate-limit");
+const { authLimiter, generalLimiter } = require("./middleware/rateLimiters");
 
 dotenv.config();
 
@@ -30,6 +32,9 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }, () => {
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
+
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
 
 // Defining Routes
 app.use("/api/users", userRoute);
