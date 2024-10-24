@@ -16,4 +16,4 @@ const authLimiter = rateLimit({
     headers: true,
 });
 
-export default { generalLimiter, authLimiter };
+module.exports = { generalLimiter, authLimiter };
