@@ -14,7 +14,6 @@ const parseCookies = (cookieHeader) => {
 const verifyToken = (req, res, next) => {
     // Manually parse cookies from the 'cookie' header
     const cookies = parseCookies(req.headers.cookie);
-    console.log("Parsed Cookies:", cookies);
 
     const token = cookies.authToken;  // Get the authToken from parsed cookies
     if (!token) {

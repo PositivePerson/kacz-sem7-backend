@@ -6,7 +6,7 @@ const User = require('../Models/User');
 const verifyToken = require('../middleware/verifyToken');
 
 // Create a new post
-router.post("/create", async (req, res) => {
+router.post("/create", verifyToken, async (req, res) => {
     const newPost = new Post({
         userId: req.body.userId,  // Should be ObjectId of the user
         desc: req.body.desc || "",  // Optional description
@@ -73,7 +73,7 @@ router.post('/:postId/comments', async (req, res) => {
 });
 
 // Delete a comment from a post
-router.delete('/:postId/comments/:commentId', async (req, res) => {
+router.delete('/:postId/comments/:commentId', verifyToken, async (req, res) => {
     try {
         // Find the post by its ID
         const post = await Post.findById(req.params.postId);
@@ -88,7 +88,7 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
         const comment = post.comments[commentIndex];
 
         // Check if the user is either the comment's author or an admin
-        if (comment.userId === req.body.userId || req.body.isAdmin) {
+        if (comment.userId === req.body.userId || req.body.isAdmin) { // Delete allowed by author or admin
             // Remove the comment from the array
             post.comments.splice(commentIndex, 1);
             await post.save();  // Save the updated post
@@ -104,10 +104,11 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
 
 
 // Edit a post
-router.put("/:postId/edit", async (req, res) => {
+router.put("/:postId/edit", verifyToken, async (req, res) => {
     try {
         const post = await Post.findById(req.params.postId)
-        if (post.userId === req.body.userId) {
+        const user = await User.findById(req.body.userId)
+        if (post.userId === req.body.userId || user.isAdmin) { // Update allowed by author or admin
             await post.updateOne({ $set: req.body });
             res.status(200).json("The post is updated");
 
@@ -124,7 +125,8 @@ router.put("/:postId/edit", async (req, res) => {
 router.delete("/:postId/delete", async (req, res) => {
     try {
         const post = await Post.findById(req.params.postId)
-        if (post.userId === req.body.userId) {
+        const user = await User.findById(req.body.userId);
+        if (post.userId === req.body.userId || user.isAdmin) { // Removal allowed by author or admin
             await post.deleteOne();
             res.status(200).json("The post is deleted");
 

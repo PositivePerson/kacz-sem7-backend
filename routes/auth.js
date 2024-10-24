@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken"); // Import JWT
+const verifyToken = require("../middleware/verifyToken");
 
 // Endpoint to verify the auth API is working
 router.get("/", (req, res) => {
@@ -82,7 +83,7 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.post("/logout", (req, res) => {
+router.post("/logout", verifyToken, (req, res) => {
     res.clearCookie("authToken", {
         httpOnly: false,
         secure: process.env.NODE_ENV === "production",
