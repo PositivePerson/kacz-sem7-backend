@@ -166,7 +166,7 @@ router.get("/:postId", async (req, res) => {
     }
 })
 
-// Get all posts or filter by userId
+// Get all posts or filter by userId, sorted by newest first
 router.get("/", verifyToken, async (req, res) => {
     console.log("User making request:", req.user);  // Log the user making the request
     console.log("Fetching posts...");
@@ -176,12 +176,12 @@ router.get("/", verifyToken, async (req, res) => {
 
         let posts;
         if (userId) {
-            // Fetch posts only for the specific userId
-            posts = await Post.find({ userId });
+            // Fetch posts only for the specific userId, sorted by creation date
+            posts = await Post.find({ userId }).sort({ createdAt: -1 }); // Sort by descending creation date
             console.log(`Posts fetched for userId ${userId}:`, posts);
         } else {
-            // Fetch all posts if no userId is provided
-            posts = await Post.find();
+            // Fetch all posts, sorted by creation date
+            posts = await Post.find().sort({ createdAt: -1 }); // Sort by descending creation date
             console.log("All posts fetched:", posts);
         }
 
