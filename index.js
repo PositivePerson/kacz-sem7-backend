@@ -9,7 +9,10 @@ const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
 const cors = require("cors");
 const https = require('https');
-const fs = require('fs');
+const fs = require("fs");
+const path = require("path");
+const accessLogStream = fs.createWriteStream(path.join(__dirname, "logs/access.log"), { flags: "a" });
+
 const rateLimit = require("express-rate-limit");
 const { authLimiter, generalLimiter } = require("./middleware/rateLimiters");
 
@@ -31,7 +34,7 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true }, () => {
 // Middleware
 app.use(express.json());
 app.use(helmet());
-app.use(morgan("common"));
+app.use(morgan("combined", { stream: accessLogStream })); // Save logs in 'combined' format to the file
 
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
