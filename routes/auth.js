@@ -9,12 +9,33 @@ router.get("/", (req, res) => {
     res.send("This is the auth API");
 });
 
+function validatePassword(password) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    /*
+        Explanation of the regex:
+        - `(?=.*[a-z])`   : At least one lowercase letter
+        - `(?=.*[A-Z])`   : At least one uppercase letter
+        - `(?=.*\d)`      : At least one digit
+        - `(?=.*[@$!%*?&])` : At least one special character (@, $, !, %, *, ?, &)
+        - `[A-Za-z\d@$!%*?&]{8,}` : Minimum 8 characters in total
+    */
+    return passwordRegex.test(password);
+}
+
 // Register a new user
 router.post("/register", async (req, res) => {
     try {
         // Check if user already exists
         const userExists = await User.findOne({ email: req.body.email });
         if (userExists) return res.status(400).json("Email already in use");
+
+        // Validate the password
+        if (!validatePassword(req.body.password)) {
+            return res.status(400).json({
+                error: "Password does not meet security requirements",
+                requirements: "Minimum 12 characters, at least one uppercase letter, one lowercase letter, one digit, and one special character",
+            });
+        }
 
         // Generate hashed password
         const salt = await bcrypt.genSalt(10);
