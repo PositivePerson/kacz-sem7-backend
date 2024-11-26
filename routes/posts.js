@@ -166,7 +166,7 @@ router.get("/:postId", async (req, res) => {
     }
 })
 
-// Get all posts or filter by userId, sorted by newest first
+// Get all posts or filter by userId, sorted from newest to oldest
 router.get("/", verifyToken, async (req, res) => {
     console.log("User making request:", req.user);  // Log the user making the request
     console.log("Fetching posts...");
@@ -176,12 +176,12 @@ router.get("/", verifyToken, async (req, res) => {
 
         let posts;
         if (userId) {
-            // Fetch posts only for the specific userId, sorted by creation date
-            posts = await Post.find({ userId }).sort({ createdAt: -1 }); // Sort by descending creation date
+            // Fetch posts only for the specific userId, sorted by descending date
+            posts = await Post.find({ userId }).sort({ date: -1 }); // Sort by date descending
             console.log(`Posts fetched for userId ${userId}:`, posts);
         } else {
-            // Fetch all posts, sorted by creation date
-            posts = await Post.find().sort({ createdAt: -1 }); // Sort by descending creation date
+            // Fetch all posts, sorted by descending date
+            posts = await Post.find().sort({ date: -1 }); // Sort by date descending
             console.log("All posts fetched:", posts);
         }
 
@@ -191,6 +191,7 @@ router.get("/", verifyToken, async (req, res) => {
         res.status(500).json("Error fetching posts");
     }
 });
+
 
 
 // //get all following user's post
