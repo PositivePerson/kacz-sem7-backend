@@ -26,7 +26,7 @@ router.post("/create", verifyToken, async (req, res) => {
 });
 
 // Get comments for a specific post
-router.get('/:postId/comments', async (req, res) => {
+router.get('/:postId/comments', verifyToken, async (req, res) => {
     try {
         const post = await Post.findById(req.params.postId);
         res.status(200).json(post.comments); // Assuming comments are stored in the post document
@@ -166,14 +166,25 @@ router.get("/:postId", async (req, res) => {
     }
 })
 
-// Get all posts
+// Get all posts or filter by userId
 router.get("/", verifyToken, async (req, res) => {
-    console.log("User making request:", req.user);  // Log the user
+    console.log("User making request:", req.user);  // Log the user making the request
     console.log("Fetching posts...");
 
     try {
-        const posts = await Post.find();  // Ensure the Post model is valid
-        console.log("Posts fetched:", posts);  // Log the result
+        const { userId } = req.query; // Get the userId from query parameters
+
+        let posts;
+        if (userId) {
+            // Fetch posts only for the specific userId
+            posts = await Post.find({ userId });
+            console.log(`Posts fetched for userId ${userId}:`, posts);
+        } else {
+            // Fetch all posts if no userId is provided
+            posts = await Post.find();
+            console.log("All posts fetched:", posts);
+        }
+
         res.status(200).json(posts);
     } catch (err) {
         console.error("Error fetching posts:", err);  // Log any errors
@@ -181,24 +192,25 @@ router.get("/", verifyToken, async (req, res) => {
     }
 });
 
-//get all following user's post
-router.get("/user/timeline", async (req, res) => {
-    let postArray = [];
 
-    try {
-        const currentUser = await User.findById(req.body.userId);
-        const userPosts = await Post.find({ userId: currentUser._id });
-        const friendPosts = await Promise.all(
-            currentUser.following.map((friendId) => {
-                return Post.find({ userId: friendId })
-            })
-        );
-        console.log(friendPosts);
-        res.status(200).json(userPosts.concat(...friendPosts));
-    } catch (err) {
-        res.status(500).json(err);
-    }
-})
+// //get all following user's post
+// router.get("/user/timeline", async (req, res) => {
+//     let postArray = [];
+
+//     try {
+//         const currentUser = await User.findById(req.body.userId);
+//         const userPosts = await Post.find({ userId: currentUser._id });
+//         const friendPosts = await Promise.all(
+//             currentUser.following.map((friendId) => {
+//                 return Post.find({ userId: friendId })
+//             })
+//         );
+//         console.log(friendPosts);
+//         res.status(200).json(userPosts.concat(...friendPosts));
+//     } catch (err) {
+//         res.status(500).json(err);
+//     }
+// })
 
 
 module.exports = router;
