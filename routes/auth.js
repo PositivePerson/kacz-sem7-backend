@@ -9,6 +9,16 @@ router.get("/", (req, res) => {
     res.send("This is the auth API");
 });
 
+router.get("/verify", verifyToken, async (req, res) => {
+    try {
+        // If the middleware succeeds, the user is authenticated
+        res.status(200).json({ message: "User is authenticated", user: req.user });
+    } catch (err) {
+        console.error("Error verifying user:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 function validatePassword(password) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     /*
